@@ -20,4 +20,14 @@ public class LoginController {
                 .status(HttpStatus.OK)
                 .body(sumOfClick);
     }
+
+    @GetMapping("/set-zero")
+    public ResponseEntity<?> setZero() {
+        sumOfClick = 0L;
+        log.info("------ Reset -----");
+        log.info("[sum of clicks]  " + sumOfClick);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(sumOfClick);
+    }
 }
