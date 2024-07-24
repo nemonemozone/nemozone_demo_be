@@ -1,33 +1,43 @@
 package Nemozone.Nemozone.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Slf4j
 @Controller
 public class LoginController {
 
-    public static Long sumOfClick = 0L;
+    public static List<String> clickIpList = new ArrayList<>();
 
     @GetMapping("/click")
-    public ResponseEntity<?> plusOneAtLogin() {
-        sumOfClick++;
-        log.info("[sum of clicks]  " + sumOfClick);
+    public ResponseEntity<?> plusOneAtLogin(HttpServletRequest request) {
+
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null) ip = request.getRemoteAddr();
+
+        if (!clickIpList.contains(ip)) {
+            clickIpList.add(ip);
+            log.info("[click ip]  " + ip);
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(sumOfClick);
+                .build();
     }
 
-    @GetMapping("/set-zero")
-    public ResponseEntity<?> setZero() {
-        sumOfClick = 0L;
-        log.info("------ Reset -----");
-        log.info("[sum of clicks]  " + sumOfClick);
+    @GetMapping("/click-ip-list")
+    public ResponseEntity<?> getClickIpList() {
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(sumOfClick);
+                .body(clickIpList);
     }
 }
